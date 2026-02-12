@@ -6,6 +6,8 @@ Requirements for server
 - ViGEm Bus driver
 - pyvjoystick
 - Windows
+
+
 Requirements for Client
 - PyGame
 - Any OS works as long as it had PyGame
