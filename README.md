@@ -10,7 +10,9 @@ Requirements for server
 
 Requirements for Client
 - PyGame
-- Any OS works as long as it had PyGame
+- Any OS works as long as it has PyGame
+
+Currently supports local IP input and has only been tested with dualsense.
 
 ## How to use
 1. Start up the client on one PC and the server on another. The client PC should be the one that will actually have the controller connected and the server is the one who will recieve the inputs and emulate them.
