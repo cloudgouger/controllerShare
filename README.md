@@ -30,4 +30,4 @@ Currently supports local IP input (internet IP theoretically should work, if not
 
 Major Milestones:
 - Working (Febuary 11th, 2026)
-- Low-Latency protobuf and L3 R3 implemented (Febuary 12th and 13th, 2026)
+- Low-Latency protobuf and L3 R3 implemented, now it can actually be used for gaming! (Febuary 12th and 13th, 2026)
