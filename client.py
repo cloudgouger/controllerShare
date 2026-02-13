@@ -1,14 +1,18 @@
 import socket
 import pygame
 import json
+import controller_pb2
+import copy
+
 
 pygame.init()
-print("Input host ip: ")
-host = input() # The ip of the person who will connect to you
+print("")
+host = input("Input host ip: ") # The ip of the person who will connect to you
+port = input("Input host port: ") # the port
 controllerServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 clientController = pygame.joystick.Joystick(0) #the number is an id value idk what it's for rn
 # AF_INET means an ipv4 socket, and sock_stream means a good two way socket
-controllerServer.connect((host, 4096))
+controllerServer.connect((host, int(port)))
 # host is a string that stores the ip address of the server we want to connect to
 # first, we pass connect the host ip, and the port. I choose 4096 because it is likely unused and has a nice ring to it
 # with this, we are now connected to the port
@@ -20,8 +24,9 @@ controllerServer.connect((host, 4096))
 
 # code to record button inputs and send them goes here:
 
-print(clientController.get_numhats())
-lastSentState = []
+controllerState = controller_pb2.controllerState()
+
+lastSentState = controller_pb2.controllerState()
 while True:
     for event in pygame.event.get(): #everytime an event comes up in pygame, execute below
         #get face buttons state
@@ -44,19 +49,50 @@ while True:
         leftStickY = clientController.get_axis(1)
         rightStickX = clientController.get_axis(2)
         rightStickY = clientController.get_axis(3)
-        controllerState = {
+        leftStickButton = clientController.get_button(7)
+        rightStickButton = clientController.get_button(8)
+
+        controllerState.faceX = ecksState
+        controllerState.faceO = oState
+        controllerState.faceSquare = squareState
+        controllerState.faceTriangle = triangleState
+
+        controllerState.upState = upState
+        controllerState.dpadDown = downState
+        controllerState.dpadLeft = leftState
+        controllerState.dpadRight = rightState
+
+        controllerState.leftBumper = leftBumperState
+        controllerState.rightBumper = rightBumperState
+
+        controllerState.leftTrigger = leftTriggerState
+        controllerState.rightTrigger = rightTriggerState
+
+        controllerState.leftButton = leftStickButton
+        controllerState.rightButton = rightStickButton
+
+        controllerState.leftStickX = leftStickX
+        controllerState.leftStickY = leftStickY
+
+        controllerState.rightStickX = rightStickX
+        controllerState.rightStickY = rightStickY
+
+        
+
+        '''controllerState = {
             "faceButtons": [ecksState, oState, squareState, triangleState],
             "dPadState": [upState, downState, leftState, rightState],
             "bumperState": [leftBumperState, rightBumperState],
             "triggerState": [leftTriggerState, rightTriggerState],
             "leftStickState": [leftStickX, leftStickY],
             "rightStickState": [rightStickX, rightStickY]
-        }
+        }'''
         #controllerState = f"{ecksState}{oState}{squareState}{triangleState}{upState}{downState}{leftState}{rightState}"
         
         if controllerState != lastSentState:
-            lastSentState = controllerState.copy()
+            lastSentState = copy.deepcopy(controllerState)
             # change to sendall to make sure all data is transmitted correctly
             # add the newline thingie
-            controllerServer.sendall((json.dumps(controllerState)).encode("utf-8") + b'\n')
+            toSend = controllerState.SerializeToString()
+            controllerServer.sendall(toSend + b'\n')
 ow 

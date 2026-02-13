@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+message controllerState {
+    int32 faceX = 1;
+    int32 faceO = 2;
+    int32 faceSquare = 3;
+    int32 faceTriangle = 4;
+
+    int32 upState = 5;
+    int32 dpadDown = 6;
+    int32 dpadLeft = 7;
+    int32 dpadRight = 8;
+
+    int32 leftBumper = 9;
+    int32 rightBumper = 10;
+
+    int32 leftButton = 11;
+    int32 rightButton = 12;
+    
+    float leftStickX = 13;
+    float leftStickY = 14;
+
+    float rightStickX = 15;
+    float rightStickY = 16;
+
+    float leftTrigger = 17;
+    float rightTrigger = 18;
+}
+

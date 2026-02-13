@@ -2,6 +2,7 @@ import socket
 import os
 import sys
 import json
+import controller_pb2
 import pyvjoystick.vigem as vg
 
 
@@ -31,102 +32,114 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as recieverSocket:
             buffer += recievedData
             # split the buffer by every newline
             while b"\n" in buffer:
-                rawJson, buffer = buffer.split(b"\n", 1)
-            decodedData = rawJson.decode()
+                rawData, buffer = buffer.split(b"\n", 1)
+            decodedData = controller_pb2.controllerState()
+            decodedData.ParseFromString(rawData)
             # clear the screen
             os.system("clear || cls")
-            print(f"LENGTH OF RECIEVED DATA: {len(decodedData)}")
-            print("JSON DATA:")
+            print(f"LENGTH OF RECIEVED DATA: {len(buffer)}")
+            print("RAW DATA:")
             print(decodedData)
-            print("LOADED JSON DATA:")
-            loadedJsonData = json.loads(decodedData)
+            print("PROCESSED DATA:")
             # Print the loaded Json data neatly
             # first for the face buttons
-            print(f"X pressed: {loadedJsonData["faceButtons"][0]}")
-            if loadedJsonData["faceButtons"][0] == 1:
+            print(f"X pressed: {decodedData.faceX}")
+            if decodedData.faceX == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_A)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_A)
-            print(f"O pressed: {loadedJsonData["faceButtons"][1]}")
-            if loadedJsonData["faceButtons"][1] == 1:
+            print(f"O pressed: {decodedData.faceO}")
+            if decodedData.faceO == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_B)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_B)
-            print(f"Square pressed: {loadedJsonData["faceButtons"][2]}")
+            print(f"Square pressed: {decodedData.faceSquare}")
 
-            if loadedJsonData["faceButtons"][2] == 1:
+            if decodedData.faceSquare == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_X)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_X)
 
-            print(f"Triangle pressed: {loadedJsonData["faceButtons"][3]}")
+            print(f"Triangle pressed: {decodedData.faceTriangle}")
 
-            if loadedJsonData["faceButtons"][3] == 1:
+            if decodedData.faceTriangle == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_Y)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_Y)
 
             # next for the d-pad
-            print(f"Up button pressed: {loadedJsonData["dPadState"][0]}")
+            print(f"Up button pressed: {decodedData.upState}")
 
-            if loadedJsonData["dPadState"][0] == 1:
+            if decodedData.upState == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_UP)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_UP)
             
-            print(f"Down button pressed: {loadedJsonData["dPadState"][1]}")
+            print(f"Down button pressed: {decodedData.dpadDown}")
 
-            if loadedJsonData["dPadState"][1] == 1:
+            if decodedData.dpadDown == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_DOWN)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_DOWN)
 
-            print(f"Left button pressed: {loadedJsonData["dPadState"][2]}")
+            print(f"Left button pressed: {decodedData.dpadLeft}")
 
-            if loadedJsonData["dPadState"][2] == 1:
+            if decodedData.dpadLeft == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_LEFT)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_LEFT)
 
-            print(f"Right button pressed: {loadedJsonData["dPadState"][3]}")
+            print(f"Right button pressed: {decodedData.dpadRight}")
 
-            if loadedJsonData["dPadState"][3] == 1:
+            if decodedData.dpadRight == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_RIGHT)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_RIGHT)
 
             # the bumpers
-            print(f"Left Bumper: {loadedJsonData["bumperState"][0]}")
+            print(f"Left Bumper: {decodedData.leftBumper}")
 
-            if loadedJsonData["bumperState"][0] == 1:
+            if decodedData.leftBumper == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
 
-            print(f"Right Bumper: {loadedJsonData["bumperState"][1]}")
+            print(f"Right Bumper: {decodedData.rightBumper}")
 
-            if loadedJsonData["bumperState"][1] == 1:
+            if decodedData.rightBumper == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
 
             # the triggers
-            print(f"Left Trigger: {loadedJsonData["triggerState"][0]}")
+            print(f"Left Trigger: {decodedData.leftTrigger}")
             emulatedGamepad.left_trigger_float(
-                value_float=((loadedJsonData["triggerState"][0] + 1) / 2))
-            print(f"Right Trigger: {loadedJsonData["triggerState"][1]}")
+                value_float=(interpolateTriggerValues(-1, 1, 0, 1, decodedData.leftTrigger)))
+            print(f"Right Trigger: {decodedData.rightTrigger}")
             emulatedGamepad.right_trigger_float(
-                value_float=((loadedJsonData["triggerState"][1] + 1) / 2))
+                value_float=(interpolateTriggerValues(-1, 1, 0, 1, decodedData.rightTrigger)))
             # left stick
-            print(f"Left stick: x: {loadedJsonData["leftStickState"][0]} y: {loadedJsonData["leftStickState"][1]}")
+            print(f"Left stick: x: {decodedData.leftStickX} y: {decodedData.leftStickY}")
             emulatedGamepad.left_joystick_float(
-                x_value_float=loadedJsonData["leftStickState"][0], 
-                y_value_float=-loadedJsonData["leftStickState"][1])
+                x_value_float=decodedData.leftStickX, 
+                y_value_float=-decodedData.leftStickY)
+            
+            if decodedData.leftButton == 1:
+                emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_THUMB)
+            else:
+                emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_THUMB)
+
             # right stick
-            print(f"Right stick: x: {loadedJsonData["rightStickState"][0]} y: {loadedJsonData["rightStickState"][1]}")
+            print(f"Right stick: x: {decodedData.rightStickX} y: {decodedData.rightStickY}")
             emulatedGamepad.right_joystick_float(
-                x_value_float=loadedJsonData["rightStickState"][0], 
-                y_value_float=-loadedJsonData["rightStickState"][1])
+                x_value_float=decodedData.rightStickX, 
+                y_value_float=-decodedData.rightStickY)
+            
+            if decodedData.rightButton == 1:
+                emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_THUMB)
+            else:
+                emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_THUMB)
+
             emulatedGamepad.update()
 
 
