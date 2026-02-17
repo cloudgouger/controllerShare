@@ -2,6 +2,7 @@ import socket
 import os
 import sys
 import json
+import time
 import controller_pb2
 import pyvjoystick.vigem as vg
 
@@ -26,6 +27,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as recieverSocket:
     conn, addr = recieverSocket.accept() # not completely sure what this does, but afaik it stops the program from continuing until a client connects to it
     with conn: # while a connection is valid it will continue the loop
         while True: 
+            time.sleep(1/30)
             recievedData = conn.recv(1024) # this loop will only send data when it is recieved (google blocking call for more info)
             if not recievedData: # if nothing is recieved
                 break
@@ -36,31 +38,31 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as recieverSocket:
             decodedData = controller_pb2.controllerState()
             decodedData.ParseFromString(rawData)
             # clear the screen
-            os.system("clear || cls")
-            print(f"LENGTH OF RECIEVED DATA: {len(buffer)}")
-            print("RAW DATA:")
-            print(decodedData)
-            print("PROCESSED DATA:")
+            #os.system("clear || cls")
+            #print(f"LENGTH OF RECIEVED DATA: {len(buffer)}")
+            #print("RAW DATA:")
+            #print(decodedData)
+            #print("PROCESSED DATA:")
             # Print the loaded Json data neatly
             # first for the face buttons
-            print(f"X pressed: {decodedData.faceX}")
+            #print(f"X pressed: {decodedData.faceX}")
             if decodedData.faceX == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_A)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_A)
-            print(f"O pressed: {decodedData.faceO}")
+            #print(f"O pressed: {decodedData.faceO}")
             if decodedData.faceO == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_B)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_B)
-            print(f"Square pressed: {decodedData.faceSquare}")
+            #print(f"Square pressed: {decodedData.faceSquare}")
 
             if decodedData.faceSquare == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_X)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_X)
 
-            print(f"Triangle pressed: {decodedData.faceTriangle}")
+            #print(f"Triangle pressed: {decodedData.faceTriangle}")
 
             if decodedData.faceTriangle == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_Y)
@@ -68,28 +70,28 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as recieverSocket:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_Y)
 
             # next for the d-pad
-            print(f"Up button pressed: {decodedData.upState}")
+            #print(f"Up button pressed: {decodedData.upState}")
 
             if decodedData.upState == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_UP)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_UP)
             
-            print(f"Down button pressed: {decodedData.dpadDown}")
+            #print(f"Down button pressed: {decodedData.dpadDown}")
 
             if decodedData.dpadDown == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_DOWN)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_DOWN)
 
-            print(f"Left button pressed: {decodedData.dpadLeft}")
+            #print(f"Left button pressed: {decodedData.dpadLeft}")
 
             if decodedData.dpadLeft == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_LEFT)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_LEFT)
 
-            print(f"Right button pressed: {decodedData.dpadRight}")
+            #print(f"Right button pressed: {decodedData.dpadRight}")
 
             if decodedData.dpadRight == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_RIGHT)
@@ -97,14 +99,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as recieverSocket:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_DPAD_RIGHT)
 
             # the bumpers
-            print(f"Left Bumper: {decodedData.leftBumper}")
+            #print(f"Left Bumper: {decodedData.leftBumper}")
 
             if decodedData.leftBumper == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
             else:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
 
-            print(f"Right Bumper: {decodedData.rightBumper}")
+            #print(f"Right Bumper: {decodedData.rightBumper}")
 
             if decodedData.rightBumper == 1:
                 emulatedGamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
@@ -112,14 +114,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as recieverSocket:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
 
             # the triggers
-            print(f"Left Trigger: {decodedData.leftTrigger}")
+            #print(f"Left Trigger: {decodedData.leftTrigger}")
             emulatedGamepad.left_trigger_float(
                 value_float=(interpolateTriggerValues(-1, 1, 0, 1, decodedData.leftTrigger)))
-            print(f"Right Trigger: {decodedData.rightTrigger}")
+            #print(f"Right Trigger: {decodedData.rightTrigger}")
             emulatedGamepad.right_trigger_float(
                 value_float=(interpolateTriggerValues(-1, 1, 0, 1, decodedData.rightTrigger)))
             # left stick
-            print(f"Left stick: x: {decodedData.leftStickX} y: {decodedData.leftStickY}")
+            #print(f"Left stick: x: {decodedData.leftStickX} y: {decodedData.leftStickY}")
             emulatedGamepad.left_joystick_float(
                 x_value_float=decodedData.leftStickX, 
                 y_value_float=-decodedData.leftStickY)
@@ -130,7 +132,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as recieverSocket:
                 emulatedGamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_THUMB)
 
             # right stick
-            print(f"Right stick: x: {decodedData.rightStickX} y: {decodedData.rightStickY}")
+            #print(f"Right stick: x: {decodedData.rightStickX} y: {decodedData.rightStickY}")
             emulatedGamepad.right_joystick_float(
                 x_value_float=decodedData.rightStickX, 
                 y_value_float=-decodedData.rightStickY)

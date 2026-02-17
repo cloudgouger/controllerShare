@@ -3,12 +3,14 @@ import pygame
 import json
 import controller_pb2
 import copy
+import time
 
 
 pygame.init()
 print("")
 host = input("Input host ip: ") # The ip of the person who will connect to you
 port = input("Input host port: ") # the port
+deadZone = 0.1
 controllerServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 clientController = pygame.joystick.Joystick(0) #the number is an id value idk what it's for rn
 # AF_INET means an ipv4 socket, and sock_stream means a good two way socket
@@ -28,6 +30,7 @@ controllerState = controller_pb2.controllerState()
 
 lastSentState = controller_pb2.controllerState()
 while True:
+    time.sleep(1/30)
     for event in pygame.event.get(): #everytime an event comes up in pygame, execute below
         #get face buttons state
         ecksState = clientController.get_button(0)
@@ -44,11 +47,31 @@ while True:
         leftTriggerState = clientController.get_axis(4)
         rightBumperState = clientController.get_button(10)
         rightTriggerState = clientController.get_axis(5)
+        leftStickX = 0
+        leftStickY = 0
+        rightStickX = 0
+        rightStickY = 0
         # get sticks state
-        leftStickX = clientController.get_axis(0)
-        leftStickY = clientController.get_axis(1)
-        rightStickX = clientController.get_axis(2)
-        rightStickY = clientController.get_axis(3)
+        tempLeftStickX = clientController.get_axis(0)
+
+        if (-deadZone < tempLeftStickX < deadZone) == False:
+            leftStickX = tempLeftStickX
+
+        tempLeftStickY = clientController.get_axis(1)
+
+        if (-deadZone < tempLeftStickY < deadZone) == False:
+            leftStickY = tempLeftStickY
+
+        tempRightStickX = clientController.get_axis(2)
+
+        if (-deadZone < tempRightStickX < deadZone) == False:
+            rightStickX = tempRightStickX
+            
+        tempRightStickY = clientController.get_axis(3)
+
+        if (-deadZone < tempRightStickY < deadZone) == False:
+            rightStickY = tempRightStickY
+
         leftStickButton = clientController.get_button(7)
         rightStickButton = clientController.get_button(8)
 
@@ -95,4 +118,3 @@ while True:
             # add the newline thingie
             toSend = controllerState.SerializeToString()
             controllerServer.sendall(toSend + b'\n')
-ow 
